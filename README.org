@@ -1,0 +1,105 @@
+#+TITLE: Readme
+
+* Introduction
+
+  =ob-go= enables [[http://orgmode.org/worg/org-contrib/babel/intro.html][Org-Babel]] support for evaluating [[http://golang.org/][go]] code. It was created
+  based on the usage of [[http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-C.html][ob-C]]. The go code is compiled and run via the =go run=
+  command. If a =main= function isn't present, then the coode is wrapped in a
+  simple =main= func and the package =main= is declared.
+
+  #+begin_example
+    ,#+begin_src go :imports "fmt"
+      fmt.Println("Hello, 世界")
+    ,#+end_src
+
+    ,#+resutls:
+    : Hello, 世界
+  #+end_example
+
+* Language Specific Header Arguments
+
+  In addition to the normal header arguments for Babel, below are some some
+  headers specific to go.
+
+  - =:args= :: Command line arguments to pass to the executable compiled from
+               the code block. To pass more than one argument, use a list.
+  - =:flags= :: Flags to pass to the =go run= command. These are the flags
+                  that you would pass to =go build=.
+  - =:main= :: If set to =no=, inhibits the auto wrapping of the =main=
+               function call.
+  - =:imports= :: Shorthand for supplying imports to the app. This should be
+                  used when you're letting the application handle the =main=
+                  function. To supply more, use a list.
+  - =:var= :: `ob-go' also supports Babel variables with some limitations. See
+              `ob-go' for more information about some of the limitations using
+              =:var=.
+
+* Additional Examples
+
+** Multiple Imports
+
+   #+begin_example
+     ,#+begin_src go :imports '("fmt" "time")
+       fmt.Println("Current Time:", time.Now())
+     ,#+end_src
+
+     ,#+RESULTS:
+     : Current Time: 2012-04-29 11:47:36.933733 -0700 PDT
+   #+end_example
+
+** Concurrent Prime Sieve
+
+   #+begin_example
+     ,#+begin_src go
+       // A concurrent prime sieve
+       package main
+
+       import "fmt"
+
+       // Send the sequence 2, 3, 4, ... to channel 'ch'.
+       func Generate(ch chan<- int) {
+               for i := 2; ; i++ {
+                       ch <- i // Send 'i' to channel 'ch'.
+               }
+       }
+
+       // Copy the values from channel 'in' to channel 'out',
+       // removing those divisible by 'prime'.
+       func Filter(in <-chan int, out chan<- int, prime int) {
+               for {
+                       i := <-in // Receive value from 'in'.
+                       if i%prime != 0 {
+                               out <- i // Send 'i' to 'out'.
+                       }
+               }
+       }
+
+       // The prime sieve: Daisy-chain Filter processes.
+       func main() {
+               ch := make(chan int) // Create a new channel.
+               go Generate(ch)      // Launch Generate goroutine.
+               for i := 0; i < 10; i++ {
+                       prime := <-ch
+                       fmt.Println(prime)
+                       ch1 := make(chan int)
+                       go Filter(ch, ch1, prime)
+                       ch = ch1
+               }
+       }
+     ,#+end_src
+
+     ,#+RESULTS:
+     ,#+begin_example
+       2
+       3
+       5
+       7
+       11
+       13
+       17
+       19
+       23
+       29
+     ,#+end_example
+   #+end_example
+
