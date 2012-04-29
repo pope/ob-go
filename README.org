@@ -7,14 +7,12 @@
   command. If a =main= function isn't present, then the coode is wrapped in a
   simple =main= func and the package =main= is declared.
 
-  #+begin_example
-    ,#+begin_src go :imports "fmt"
-      fmt.Println("Hello, 世界")
-    ,#+end_src
-
-    ,#+resutls:
-    : Hello, 世界
-  #+end_example
+  : #+begin_src go :imports "fmt"
+  :   fmt.Println("Hello, 世界")
+  : #+end_src
+  : 
+  : #+resutls:
+  : : Hello, 世界
 
 * Language Specific Header Arguments
 
@@ -38,68 +36,63 @@
 
 ** Multiple Imports
 
-   #+begin_example
-     ,#+begin_src go :imports '("fmt" "time")
-       fmt.Println("Current Time:", time.Now())
-     ,#+end_src
-
-     ,#+RESULTS:
-     : Current Time: 2012-04-29 11:47:36.933733 -0700 PDT
-   #+end_example
+   : #+begin_src go :imports '("fmt" "time")
+   :   fmt.Println("Current Time:", time.Now())
+   : #+end_src
+   : 
+   : #+RESULTS:
+   : : Current Time: 2012-04-29 11:47:36.933733 -0700 PDT
 
 ** Concurrent Prime Sieve
 
-   #+begin_example
-     ,#+begin_src go
-       // A concurrent prime sieve
-       package main
-
-       import "fmt"
-
-       // Send the sequence 2, 3, 4, ... to channel 'ch'.
-       func Generate(ch chan<- int) {
-               for i := 2; ; i++ {
-                       ch <- i // Send 'i' to channel 'ch'.
-               }
-       }
-
-       // Copy the values from channel 'in' to channel 'out',
-       // removing those divisible by 'prime'.
-       func Filter(in <-chan int, out chan<- int, prime int) {
-               for {
-                       i := <-in // Receive value from 'in'.
-                       if i%prime != 0 {
-                               out <- i // Send 'i' to 'out'.
-                       }
-               }
-       }
-
-       // The prime sieve: Daisy-chain Filter processes.
-       func main() {
-               ch := make(chan int) // Create a new channel.
-               go Generate(ch)      // Launch Generate goroutine.
-               for i := 0; i < 10; i++ {
-                       prime := <-ch
-                       fmt.Println(prime)
-                       ch1 := make(chan int)
-                       go Filter(ch, ch1, prime)
-                       ch = ch1
-               }
-       }
-     ,#+end_src
-
-     ,#+RESULTS:
-     ,#+begin_example
-       2
-       3
-       5
-       7
-       11
-       13
-       17
-       19
-       23
-       29
-     ,#+end_example
-   #+end_example
-
+   : #+begin_src go
+   :   // A concurrent prime sieve
+   :   package main
+   : 
+   :   import "fmt"
+   : 
+   :   // Send the sequence 2, 3, 4, ... to channel 'ch'.
+   :   func Generate(ch chan<- int) {
+   :           for i := 2; ; i++ {
+   :                   ch <- i // Send 'i' to channel 'ch'.
+   :           }
+   :   }
+   : 
+   :   // Copy the values from channel 'in' to channel 'out',
+   :   // removing those divisible by 'prime'.
+   :   func Filter(in <-chan int, out chan<- int, prime int) {
+   :           for {
+   :                   i := <-in // Receive value from 'in'.
+   :                   if i%prime != 0 {
+   :                           out <- i // Send 'i' to 'out'.
+   :                   }
+   :           }
+   :   }
+   : 
+   :   // The prime sieve: Daisy-chain Filter processes.
+   :   func main() {
+   :           ch := make(chan int) // Create a new channel.
+   :           go Generate(ch)      // Launch Generate goroutine.
+   :           for i := 0; i < 10; i++ {
+   :                   prime := <-ch
+   :                   fmt.Println(prime)
+   :                   ch1 := make(chan int)
+   :                   go Filter(ch, ch1, prime)
+   :                   ch = ch1
+   :           }
+   :   }
+   : #+end_src
+   : 
+   : #+RESULTS:
+   : #+begin_example
+   :   2
+   :   3
+   :   5
+   :   7
+   :   11
+   :   13
+   :   17
+   :   19
+   :   23
+   :   29
+   : #+end_example
