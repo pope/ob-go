@@ -89,7 +89,7 @@
                 ;; package
                 (org-babel-go-ensure-package body)
                 ;; imports
-                (mapconcat '(lambda (pkg) (format "import %S" pkg))
+                (mapconcat #'(lambda (pkg) (format "import %S" pkg))
                            (org-babel-go-as-list imports)
                            "\n")
                 ;; variables
@@ -133,19 +133,19 @@ called by `org-babel-execute-src-block'"
                  org-babel-go-command
                  (mapconcat 'identity (org-babel-go-as-list flags) " ")
                  (org-babel-process-file-name tmp-src-file)
-                 (mapconcat '(lambda (a)
-                               ;; If there's a chance that the symbol is a
-                               ;; ref, use that. Otherwise, just return the
-                               ;; string form of the value.
-                               (format "%S" (if (symbolp a)
-                                                (let* ((ref (symbol-name a))
-                                                       (out (org-babel-read ref)))
-                                                  (if (equal out ref)
-                                                      (if (string-match "^\".*\"$" ref)
-                                                          (read ref)
-                                                        (org-babel-ref-resolve ref))
-                                                    out))
-                                              a)))
+                 (mapconcat #'(lambda (a)
+                                ;; If there's a chance that the symbol is a
+                                ;; ref, use that. Otherwise, just return the
+                                ;; string form of the value.
+                                (format "%S" (if (symbolp a)
+                                                 (let* ((ref (symbol-name a))
+                                                        (out (org-babel-read ref)))
+                                                   (if (equal out ref)
+                                                       (if (string-match "^\".*\"$" ref)
+                                                           (read ref)
+                                                         (org-babel-ref-resolve ref))
+                                                     out))
+                                               a)))
                             (org-babel-go-as-list args) " "))
          ""))))))
 
