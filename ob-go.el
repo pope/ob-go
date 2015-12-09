@@ -6,6 +6,7 @@
 ;; Keywords: golang, go, literate programming, reproducible research
 ;; Homepage: http://orgmode.org
 ;; Version: 0.01
+;; Package-Requires: ((go-mode "1.0.0"))
 
 ;;; License:
 
