@@ -196,3 +196,4 @@ Emacs-lisp table, otherwise return the results as a string."
   (org-babel-script-escape results))
 
 (provide 'ob-go)
+;;; ob-go.el ends here
