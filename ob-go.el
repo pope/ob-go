@@ -63,6 +63,7 @@
 
 ;;; Code:
 (require 'go-mode)
+(require 'org)
 (require 'ob)
 (require 'ob-eval)
 (require 'ob-ref)
