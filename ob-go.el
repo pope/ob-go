@@ -6,6 +6,7 @@
 ;; Keywords: golang, go, literate programming, reproducible research
 ;; Homepage: http://orgmode.org
 ;; Version: 0.01
+;; Package-Requires: ((go-mode "1.0.0"))
 
 ;;; License:
 
@@ -62,6 +63,7 @@
 
 ;;; Code:
 (require 'go-mode)
+(require 'org)
 (require 'ob)
 (require 'ob-eval)
 (require 'ob-ref)
@@ -196,3 +198,4 @@ Emacs-lisp table, otherwise return the results as a string."
   (org-babel-script-escape results))
 
 (provide 'ob-go)
+;;; ob-go.el ends here
