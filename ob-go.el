@@ -36,7 +36,7 @@
 ;; to find the reference data.
 ;;
 ;; If you do not include a main function or a package name, `ob-go' will
-;; provide it for you and it's the only way to properly use 
+;; provide it for you and it's the only way to properly use
 ;;
 ;; very limited implementation:
 ;; - currently only support :results output.
@@ -85,22 +85,26 @@
   (let ((vars (mapcar #'cdr (org-babel-get-header params :var)))
         (main-p (not (string= (cdr (assoc :main params)) "no")))
         (imports (or (cdr (assoc :imports params))
-                     (org-babel-read (org-entry-get nil "imports" t)))))
-    (mapconcat 'identity
-               (list
-                ;; package
-                (org-babel-go-ensure-package body)
-                ;; imports
-                (mapconcat #'(lambda (pkg) (format "import %S" pkg))
-                           (org-babel-go-as-list imports)
-                           "\n")
-                ;; variables
-                (mapconcat 'org-babel-go-var-to-go vars "\n")
-                ;; body
-                (if main-p
-                    (org-babel-go-ensure-main-wrap body)
-                  body))
-               "\n")))
+                     (org-babel-read (org-entry-get nil "imports" t))))
+        (package (or (cdr (assoc :package params))
+                     (org-babel-read (org-entry-get nil "package" t)))))
+    (if (and main-p package)
+        (error ":package shall be used with :main no")
+      (mapconcat 'identity
+                 (list
+                  ;; package
+                  (org-babel-go-ensure-package body package)
+                  ;; imports
+                  (mapconcat #'(lambda (pkg) (format "import %S" pkg))
+                             (org-babel-go-as-list imports)
+                             "\n")
+                  ;; variables
+                  (mapconcat 'org-babel-go-var-to-go vars "\n")
+                  ;; body
+                  (if main-p
+                      (org-babel-go-ensure-main-wrap body)
+                    body))
+                 "\n"))))
 
 (defun org-babel-execute:go (body params)
   "Execute a block of Template code with org-babel.  This function is
@@ -164,11 +168,13 @@ support for sessions"
       body
     (concat "func main() {\n" body "\n}\n")))
 
-(defun org-babel-go-ensure-package (body)
+(defun org-babel-go-ensure-package (body package)
   "Check to see if package is set. If not, add main."
-  (if (string-match-p "^[ \t]*package" body)
-      ""
-    "package main"))
+  (if package
+      (concat "package " package)
+    (if (string-match-p "^[ \t]*package" body)
+        ""
+      "package main")))
 
 (defun org-babel-go-gofmt (body)
   "Run gofmt over the body. Why not?"
