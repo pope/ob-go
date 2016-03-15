@@ -46,7 +46,7 @@
 ;;; Requirements:
 
 ;; - You must have go1 installed and the go should be in your `exec-path'. If
-;;   not, feel free to modify `org-babel-go-command' to the location of your
+;;   not, feel free to modify `org-babel-go-compiler' to the location of your
 ;;   go command.
 ;;
 ;; - `go-mode' is also needed for syntax highlighting and formatting. Not this
@@ -62,7 +62,7 @@
 ;;   package declaration.
 
 ;;; Code:
-(require 'go-mode)
+;;;(require 'go-mode)
 (require 'org)
 (require 'ob)
 (require 'ob-eval)
@@ -74,7 +74,7 @@
 
 (defvar org-babel-default-header-args:go '())
 
-(defvar org-babel-go-command "go"
+(defvar org-babel-go-compiler "go"
   "The go command to use to compile and run the go code.")
 
 (defmacro org-babel-go-as-list (val)
@@ -82,7 +82,7 @@
 
 (defun org-babel-expand-body:go (body params &optional processed-params)
   "Expand BODY according to PARAMS, return the expanded body."
-  (let ((vars (mapcar #'cdr (org-babel-get-header params :var)))
+  (let ((vars (mapcar #'cdr (org-babel--get-vars params)))
         (main-p (not (string= (cdr (assoc :main params)) "no")))
         (imports (or (cdr (assoc :imports params))
                      (org-babel-read (org-entry-get nil "imports" t))))
@@ -136,7 +136,7 @@ called by `org-babel-execute-src-block'"
         (with-temp-file tmp-src-file (insert full-body))
         (org-babel-eval
          (format "%s run %s \"%s\" %s"
-                 org-babel-go-command
+                 org-babel-go-compiler
                  (mapconcat 'identity (org-babel-go-as-list flags) " ")
                  (org-babel-process-file-name tmp-src-file)
                  (mapconcat #'(lambda (a)
@@ -202,6 +202,19 @@ specifying a var of the same value."
   "If the results look like a table, then convert them into an
 Emacs-lisp table, otherwise return the results as a string."
   (org-babel-script-escape results))
+
+;; Unit Testing
+
+(defvar org-babel-go-runtests nil)
+
+(eval-when-compile
+  ;; skips tests if go isn't correctly installed
+  (let ((go-version (shell-command-to-string "go version")))
+    (setq org-babel-go-runtests (string-match "go version .*" go-version))))
+
+;; (not  (or (string-match ".* command not found" (shell-command-to-string "go2 version"))
+;;           (string-match ".*not found" go-version)))
+
 
 (provide 'ob-go)
 ;;; ob-go.el ends here

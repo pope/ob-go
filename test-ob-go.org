@@ -1,0 +1,9 @@
+#+OPTIONS: ^:nil
+* Simple tests
+  :PROPERTIES:
+  :ID:       412a86b1-644a-45b8-9e6d-bdc2b42d7e20
+  :END:
+#+source: simple
+#+begin_src go :imports "fmt" :results silent
+  fmt.Printf("42");
+#+end_src
