@@ -5,8 +5,7 @@
 ;; Author: K. Adam Christensen
 ;; Keywords: golang, go, literate programming, reproducible research
 ;; Homepage: http://orgmode.org
-;; Version: 0.01
-;; Package-Requires: ((go-mode "1.0.0"))
+;; Version: 0.02
 
 ;;; License:
 
@@ -46,11 +45,12 @@
 ;;; Requirements:
 
 ;; - You must have go1 installed and the go should be in your `exec-path'. If
-;;   not, feel free to modify `org-babel-go-compiler' to the location of your
+;;   not, feel free to modify `org-babel-go-command' to the location of your
 ;;   go command.
 ;;
-;; - `go-mode' is also needed for syntax highlighting and formatting. Not this
-;;   this partucularly needs it, it just assumes you have it.
+;; - `go-mode' is also recommended for syntax highlighting and
+;;   formatting. Not this particularly needs it, it just assumes you
+;;   have it.
 
 ;;; TODO:
 
@@ -67,21 +67,13 @@
 (require 'ob-eval)
 (require 'ob-ref)
 
-(defun ob-go-get-var (params)
-  "org-babel-get-header was removed in org version 8.3.3"
-  (let* ((fversion (org-version))
-        (version (string-to-int fversion)))
-    (if (< version 8.3)
-        (mapcar #'cdr (org-babel-get-header params :var))
-      (org-babel--get-vars params))))
-
 
 ;; optionally define a file extension for this language
 (add-to-list 'org-babel-tangle-lang-exts '("go" . "go"))
 
 (defvar org-babel-default-header-args:go '())
 
-(defvar org-babel-go-compiler "go"
+(defvar org-babel-go-command "go"
   "The go command to use to compile and run the go code.")
 
 (defmacro org-babel-go-as-list (val)
@@ -89,7 +81,7 @@
 
 (defun org-babel-expand-body:go (body params &optional processed-params)
   "Expand BODY according to PARAMS, return the expanded body."
-  (let ((vars (ob-go-get-var params))
+  (let ((vars (org-babel-go-get-var params))
         (main-p (not (string= (cdr (assoc :main params)) "no")))
         (imports (or (cdr (assoc :imports params))
                      (org-babel-read (org-entry-get nil "imports" t))))
@@ -143,7 +135,7 @@ called by `org-babel-execute-src-block'"
         (with-temp-file tmp-src-file (insert full-body))
         (org-babel-eval
          (format "%s run %s \"%s\" %s"
-                 org-babel-go-compiler
+                 org-babel-go-command
                  (mapconcat 'identity (org-babel-go-as-list flags) " ")
                  (org-babel-process-file-name tmp-src-file)
                  (mapconcat #'(lambda (a)
@@ -182,6 +174,14 @@ support for sessions"
     (if (string-match-p "^[ \t]*package" body)
         ""
       "package main")))
+
+(defun org-babel-go-get-var (params)
+  "org-babel-get-header was removed in org version 8.3.3"
+  (let* ((fversion (org-version))
+        (version (string-to-int fversion)))
+    (if (< version 8.3)
+        (mapcar #'cdr (org-babel-get-header params :var))
+      (org-babel--get-vars params))))
 
 (defun org-babel-go-gofmt (body)
   "Run gofmt over the body. Why not?"
