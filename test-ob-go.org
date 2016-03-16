@@ -5,5 +5,44 @@
   :END:
 #+source: simple
 #+begin_src go :imports "fmt" :results silent
-  fmt.Printf("42");
+    fmt.Printf("42");
 #+end_src
+
+#+source: integer-var
+#+begin_src go :var q=12 :imports "fmt" :results silent
+    fmt.Print(q)
+#+end_src
+
+#+source: two-variables
+#+begin_src go :var q=333 :var p=333 :imports "fmt" :results silent
+    fmt.Print(q+p)
+#+end_src
+
+#+source: string-var
+#+begin_src go :var q="golang" :tangle string-var.go :imports "fmt" :results silent
+    fmt.Print(q)
+#+end_src
+
+* Array
+  :PROPERTIES:
+  :ID:       1e9cf4e3-02df-4f3c-8533-2c0b1ca0a25a
+  :END:
+#+source: array
+#+BEGIN_SRC go :imports "fmt" :results vector :results silent
+for i := 1; i < 3; i++ {
+	fmt.Printf("%d\n", i)
+}
+#+END_SRC
+
+* Matrix
+  :PROPERTIES:
+  :ID:       15000dad-5af1-45e3-ac80-a371335866dc
+  :END:
+#+name: Go-matrix
+| 1 | 2 |
+| 3 | 4 |
+
+#+source: list-var
+#+BEGIN_SRC go :var a='("abc" "def") :imports "fmt" :results silent
+fmt.Printf("%s\n", a[0] + a[1] + string(len(a)))
+#+END_SRC

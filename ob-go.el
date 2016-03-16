@@ -62,11 +62,18 @@
 ;;   package declaration.
 
 ;;; Code:
-;;;(require 'go-mode)
 (require 'org)
 (require 'ob)
 (require 'ob-eval)
 (require 'ob-ref)
+
+(defun ob-go-get-var (params)
+  "org-babel-get-header was removed in org version 8.3.3"
+  (let* ((fversion (org-version))
+        (version (string-to-int fversion)))
+    (if (< version 8.3)
+        (mapcar #'cdr (org-babel-get-header params :var))
+      (org-babel--get-vars params))))
 
 
 ;; optionally define a file extension for this language
@@ -82,7 +89,7 @@
 
 (defun org-babel-expand-body:go (body params &optional processed-params)
   "Expand BODY according to PARAMS, return the expanded body."
-  (let ((vars (mapcar #'cdr (org-babel--get-vars params)))
+  (let ((vars (ob-go-get-var params))
         (main-p (not (string= (cdr (assoc :main params)) "no")))
         (imports (or (cdr (assoc :imports params))
                      (org-babel-read (org-entry-get nil "imports" t))))
@@ -202,19 +209,6 @@ specifying a var of the same value."
   "If the results look like a table, then convert them into an
 Emacs-lisp table, otherwise return the results as a string."
   (org-babel-script-escape results))
-
-;; Unit Testing
-
-(defvar org-babel-go-runtests nil)
-
-(eval-when-compile
-  ;; skips tests if go isn't correctly installed
-  (let ((go-version (shell-command-to-string "go version")))
-    (setq org-babel-go-runtests (string-match "go version .*" go-version))))
-
-;; (not  (or (string-match ".* command not found" (shell-command-to-string "go2 version"))
-;;           (string-match ".*not found" go-version)))
-
 
 (provide 'ob-go)
 ;;; ob-go.el ends here

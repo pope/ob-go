@@ -16,9 +16,6 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Code:
-(require 'org-id)
-(require 'cl)
-(require 'ox)
 
 (defconst ob-go-test-dir
   (expand-file-name (file-name-directory (or load-file-name buffer-file-name))))
@@ -27,10 +24,10 @@
   (expand-file-name ".test-org-id-locations" ob-go-test-dir))
 
 (defun ob-go-test-update-id-locations ()
-  (org-id-update-id-locations
-   (directory-files
-    ob-go-test-dir 'full
-    "^\\([^.]\\|\\.\\([^.]\\|\\..\\)\\).*\\.org$")))
+  (let ((files (directory-files
+                ob-go-test-dir 'full
+                "^\\([^.]\\|\\.\\([^.]\\|\\..\\)\\).*\\.org$")))
+    (org-id-update-id-locations files)))
 
 (defmacro org-test-at-id (id &rest body)
   "Run body after placing the point in the headline identified by ID."
@@ -54,12 +51,6 @@
 	 (kill-buffer to-be-removed)))))
 (def-edebug-spec org-test-at-id (form body))
 
-(defun ob-go-test-runall ()
-  (interactive)
-  (progn
-    (ob-go-test-update-id-locations)
-    (ert t)))
-
 (unless (featurep 'ob-go)
   (signal 'missing-test-dependency "Support for Go code blocks"))
 
@@ -72,5 +63,46 @@
       (org-test-at-id "412a86b1-644a-45b8-9e6d-bdc2b42d7e20"
 		      (org-babel-next-src-block 1)
 		      (should (= 42 (org-babel-execute-src-block))))))
+
+(ert-deftest ob-go/integer-var ()
+  "Test of an integer variable."
+  (if (executable-find org-babel-go-compiler)
+      (org-test-at-id "412a86b1-644a-45b8-9e6d-bdc2b42d7e20"
+		      (org-babel-next-src-block 2)
+		      (should (= 12 (org-babel-execute-src-block))))))
+
+(ert-deftest ob-go/two-variables ()
+  "Test of two integer variables."
+  (if (executable-find org-babel-go-compiler)
+      (org-test-at-id "412a86b1-644a-45b8-9e6d-bdc2b42d7e20"
+		      (org-babel-next-src-block 3)
+		      (should (= 666 (org-babel-execute-src-block))))))
+
+(ert-deftest ob-go/string-variables ()
+  "Test the usage of string variables."
+  (if (executable-find org-babel-go-compiler)
+      (org-test-at-id "412a86b1-644a-45b8-9e6d-bdc2b42d7e20"
+		      (org-babel-next-src-block 4)
+		      (should (string-equal "golang" (org-babel-execute-src-block))))))
+
+(ert-deftest ob-go/table ()
+  "Test of a table output."
+  (if (executable-find org-babel-go-compiler)
+      (org-test-at-id "1e9cf4e3-02df-4f3c-8533-2c0b1ca0a25a"
+		      (org-babel-next-src-block 1)
+		      (should (equal '((1) (2)) (org-babel-execute-src-block))))))
+
+;; ob-go doesn't handle list variables yet
+;; (ert-deftest ob-go/list-var ()
+;;   "Test of a list input variable"
+;;   (if (executable-find org-babel-go-compiler)
+;;       (org-test-at-id "15000dad-5af1-45e3-ac80-a371335866dc"
+;; 		      (org-babel-next-src-block 1)
+;; 		      (should (string= "abcdef2" (org-babel-execute-src-block))))))
+
+(defun ob-go-test-runall ()
+  (progn
+    (ob-go-test-update-id-locations)
+    (ert t)))
 
 (provide 'ob-go-test)
