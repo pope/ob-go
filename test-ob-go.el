@@ -123,6 +123,14 @@
                       (should (string-equal "works"
                                             (org-babel-execute-src-block))))))
 
+(ert-deftest ob-go/regression1 ()
+  (if (executable-find org-babel-go-command)
+      (org-test-at-id "3f63c93d-6f17-478d-9817-e5c24a696689"
+                      (org-babel-next-src-block 1)
+                      (should (string-equal "'h' and 'i'"
+                                            (org-babel-execute-src-block))))))
+
+
 (defun ob-go-test-runall ()
   (progn
     (ob-go-test-update-id-locations)

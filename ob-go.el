@@ -125,7 +125,7 @@ called by `org-babel-execute-src-block'"
             (let ((tmp-file (org-babel-temp-file "go-")))
               (with-temp-file tmp-file (insert results))
               (org-babel-import-elisp-from-file tmp-file))
-          (org-babel-go-table-or-string results))
+          (org-babel-read results t))
         (org-babel-pick-name
 	 (cdr (assoc :colname-names params)) (cdr (assoc :colnames params)))
 	(org-babel-pick-name
@@ -176,9 +176,13 @@ support for sessions"
       "package main")))
 
 (defun org-babel-go-insert-imports (imports)
-  (mapconcat #'(lambda (pkg) (format "import %S" pkg))
+  (concat "import ("
+          "\n\t"
+          (mapconcat #'(lambda (pkg) (format "%S" pkg))
                              (org-babel-go-as-list imports)
-                             "\n"))
+                             "\t\n")
+          "\n)"
+          "\n"))
 
 (defun org-babel-go-get-var (params)
   "org-babel-get-header was removed in org version 8.3.3"
@@ -209,11 +213,6 @@ specifying a var of the same value."
       (setq val (symbol-name val)))
     ;; TODO(pope): Handle tables and lists.
     (format "var %S = %S" var val)))
-
-(defun org-babel-go-table-or-string (results)
-  "If the results look like a table, then convert them into an
-Emacs-lisp table, otherwise return the results as a string."
-  (org-babel-script-escape results))
 
 (provide 'ob-go)
 ;;; ob-go.el ends here

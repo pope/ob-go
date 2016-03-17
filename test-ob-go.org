@@ -5,7 +5,7 @@
   :END:
 #+source: simple
 #+BEGIN_SRC go :imports "fmt" :results silent
-    fmt.Printf("42");
+    fmt.Printf("42")
 #+END_SRC
 
 #+source: integer-var
@@ -72,4 +72,17 @@ fmt.Printf("%v", math.Pi)
 func main() {
         fmt.Printf("works")
 }
+#+END_SRC
+
+#+RESULTS: package
+: works
+
+* Regression tests
+  :PROPERTIES:
+  :ID:       3f63c93d-6f17-478d-9817-e5c24a696689
+  :END:
+
+#+BEGIN_SRC go :imports "fmt" :results silent
+    s := "'h' and 'i'"
+    fmt.Printf("%s\n", s)
 #+END_SRC
