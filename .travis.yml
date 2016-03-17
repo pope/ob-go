@@ -1,8 +1,8 @@
 env:
   matrix:
-    EMACS=emacs23
-    EMACS=emacs24
-    EMACS=emacs-snapshot
+    - EMACS=emacs23
+    - EMACS=emacs24
+    - EMACS=emacs-snapshot
 
 matrix:
   allow_failures:
