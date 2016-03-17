@@ -4,24 +4,31 @@
   :ID:       412a86b1-644a-45b8-9e6d-bdc2b42d7e20
   :END:
 #+source: simple
-#+begin_src go :imports "fmt" :results silent
+#+BEGIN_SRC go :imports "fmt" :results silent
     fmt.Printf("42");
-#+end_src
+#+END_SRC
 
 #+source: integer-var
-#+begin_src go :var q=12 :imports "fmt" :results silent
+#+BEGIN_SRC go :var q=12 :imports "fmt" :results silent
     fmt.Print(q)
-#+end_src
+#+END_SRC
 
 #+source: two-variables
-#+begin_src go :var q=333 :var p=333 :imports "fmt" :results silent
+#+BEGIN_SRC go :var q=333 :var p=333 :imports "fmt" :results silent
     fmt.Print(q+p)
-#+end_src
+#+END_SRC
+
+#+source: two-variables2
+#+HEADER: :var q=333
+#+HEADER: :var p=333
+#+BEGIN_SRC go :imports "fmt" :results silent
+    fmt.Print(q+p)
+#+END_SRC
 
 #+source: string-var
-#+begin_src go :var q="golang" :tangle string-var.go :imports "fmt" :results silent
+#+BEGIN_SRC go :var q="golang" :imports "fmt" :results silent
     fmt.Print(q)
-#+end_src
+#+END_SRC
 
 * Array
   :PROPERTIES:
@@ -45,4 +52,24 @@ for i := 1; i < 3; i++ {
 #+source: list-var
 #+BEGIN_SRC go :var a='("abc" "def") :imports "fmt" :results silent
 fmt.Printf("%s\n", a[0] + a[1] + string(len(a)))
+#+END_SRC
+* Imports
+  :PROPERTIES:
+  :ID:       e1aaec56-f3c6-4187-a003-5530b3ba956d
+  :END:
+#+source: imports
+#+BEGIN_SRC go :imports '("fmt" "math") :results silent
+fmt.Printf("%v", math.Pi)
+#+END_SRC
+
+* Package
+  :PROPERTIES:
+  :ID:       c44f7afe-d356-4293-ba83-9ac71c7e6049
+  :END:
+
+#+source: package
+#+BEGIN_SRC go :main no :package main :imports "fmt"
+func main() {
+        fmt.Printf("works")
+}
 #+END_SRC
