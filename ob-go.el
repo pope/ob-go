@@ -93,10 +93,10 @@
                  (list
                   ;; package
                   (org-babel-go-ensure-package body package)
+
                   ;; imports
-                  (mapconcat #'(lambda (pkg) (format "import %S" pkg))
-                             (org-babel-go-as-list imports)
-                             "\n")
+                  (org-babel-go-insert-imports imports)
+
                   ;; variables
                   (mapconcat 'org-babel-go-var-to-go vars "\n")
                   ;; body
@@ -174,6 +174,11 @@ support for sessions"
     (if (string-match-p "^[ \t]*package" body)
         ""
       "package main")))
+
+(defun org-babel-go-insert-imports (imports)
+  (mapconcat #'(lambda (pkg) (format "import %S" pkg))
+                             (org-babel-go-as-list imports)
+                             "\n"))
 
 (defun org-babel-go-get-var (params)
   "org-babel-get-header was removed in org version 8.3.3"
