@@ -16,6 +16,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Code:
+(require 'org-id)
 
 (defconst ob-go-test-dir
   (expand-file-name (file-name-directory (or load-file-name buffer-file-name))))
