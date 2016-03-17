@@ -29,7 +29,7 @@ before_install:
 
 before_script:
   - if [ "$EMACS" = "emacs23" ]; then
-      curl 'http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/ert.el?h=emacs-24.3' > ert.el
+      curl 'http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/ert.el?h=emacs-24.3' > ert.el;
     fi
 
 script: make test
