@@ -68,14 +68,11 @@ fmt.Printf("%v", math.Pi)
   :END:
 
 #+source: package
-#+BEGIN_SRC go :main no :package main :imports "fmt"
+#+BEGIN_SRC go :main no :package main :imports "fmt" :results silent
 func main() {
         fmt.Printf("works")
 }
 #+END_SRC
-
-#+RESULTS: package
-: works
 
 * Regression tests
   :PROPERTIES:
