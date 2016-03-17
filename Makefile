@@ -2,7 +2,7 @@
 
 test:
 	@rm -f .test-org-id-locations
-	emacs -Q --batch \
+	emacs -Q --batch -q \
 		-L . \
 		-l ob-go.el \
 		-l test-ob-go.el \
