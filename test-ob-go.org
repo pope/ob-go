@@ -53,6 +53,7 @@ for i := 1; i < 3; i++ {
 #+BEGIN_SRC go :var a='("abc" "def") :imports "fmt" :results silent
 fmt.Printf("%s\n", a[0] + a[1] + string(len(a)))
 #+END_SRC
+
 * Imports
   :PROPERTIES:
   :ID:       e1aaec56-f3c6-4187-a003-5530b3ba956d
