@@ -80,11 +80,18 @@
 		      (org-babel-next-src-block 3)
 		      (should (= 666 (org-babel-execute-src-block))))))
 
+(ert-deftest ob-go/two-variables2 ()
+  "Test of two integer variables."
+  (if (executable-find org-babel-go-command)
+      (org-test-at-id "412a86b1-644a-45b8-9e6d-bdc2b42d7e20"
+		      (org-babel-next-src-block 4)
+		      (should (= 666 (org-babel-execute-src-block))))))
+
 (ert-deftest ob-go/string-variables ()
   "Test the usage of string variables."
   (if (executable-find org-babel-go-command)
       (org-test-at-id "412a86b1-644a-45b8-9e6d-bdc2b42d7e20"
-		      (org-babel-next-src-block 4)
+		      (org-babel-next-src-block 5)
 		      (should (string-equal "golang" (org-babel-execute-src-block))))))
 
 (ert-deftest ob-go/table ()
@@ -101,6 +108,29 @@
 ;;       (org-test-at-id "15000dad-5af1-45e3-ac80-a371335866dc"
 ;; 		      (org-babel-next-src-block 1)
 ;; 		      (should (string= "abcdef2" (org-babel-execute-src-block))))))
+
+(ert-deftest ob-go/imports ()
+  "Test the imports option"
+  (if (executable-find org-babel-go-command)
+      (org-test-at-id "e1aaec56-f3c6-4187-a003-5530b3ba956d"
+                      (org-babel-next-src-block 1)
+                      (should (= 3.141592653589793
+                                 (org-babel-execute-src-block))))))
+
+(ert-deftest ob-go/packages ()
+  (if (executable-find org-babel-go-command)
+      (org-test-at-id "c44f7afe-d356-4293-ba83-9ac71c7e6049"
+                      (org-babel-next-src-block 1)
+                      (should (string-equal "works"
+                                            (org-babel-execute-src-block))))))
+
+(ert-deftest ob-go/regression1 ()
+  (if (executable-find org-babel-go-command)
+      (org-test-at-id "3f63c93d-6f17-478d-9817-e5c24a696689"
+                      (org-babel-next-src-block 1)
+                      (should (string-equal "'h' and 'i'"
+                                            (org-babel-execute-src-block))))))
+
 
 (defun ob-go-test-runall ()
   (progn
