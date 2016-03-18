@@ -7,7 +7,6 @@ env:
 matrix:
   allow_failures:
     - env: EMACS=emacs-snapshot
-    - env: EMACS=emacs23
 
 before_install:
   - if [ "$EMACS"= "emacs23" ]; then
@@ -30,6 +29,8 @@ before_install:
 
 before_script:
   - if [ "$EMACS" = "emacs23" ]; then
+      curl 'http://orgmode.org/org-8.2.5h.tar.gz' \
+          | tar xzf - --wildcards --strip-components=2 org-8.2.5h/lisp/*.el &&
       curl 'http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/ert.el?h=emacs-24.3' > ert.el;
     fi
 
