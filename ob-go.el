@@ -185,7 +185,7 @@ support for sessions"
           "\n"))
 
 (defun org-babel-go-get-var (params)
-  "org-babel-get-header in newer versions of org (master branch)"
+  "org-babel-get-header was removed in newer versions of org (master branch)"
   (if (fboundp 'org-babel-get-header)
       (mapcar #'cdr (org-babel-get-header params :var))
     (org-babel--get-vars params)))
