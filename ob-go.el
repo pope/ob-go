@@ -185,12 +185,10 @@ support for sessions"
           "\n"))
 
 (defun org-babel-go-get-var (params)
-  "org-babel-get-header was removed in org version 8.3.3"
-  (let* ((fversion (org-version))
-        (version (string-to-int fversion)))
-    (if (< version 8.3)
-        (mapcar #'cdr (org-babel-get-header params :var))
-      (org-babel--get-vars params))))
+  "org-babel-get-header was removed in newer versions of org (master branch)"
+  (if (fboundp 'org-babel-get-header)
+      (mapcar #'cdr (org-babel-get-header params :var))
+    (org-babel--get-vars params)))
 
 (defun org-babel-go-gofmt (body)
   "Run gofmt over the body. Why not?"
