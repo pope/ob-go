@@ -118,41 +118,38 @@ called by `org-babel-execute-src-block'"
                      body params processed-params))
          (coding-system-for-read 'utf-8) ;; use utf-8 with subprocesses
          (coding-system-for-write 'utf-8))
-    ((lambda (results)
-       (org-babel-reassemble-table
-        (if (or (member "table" (cdr (assoc :result-params processed-params)))
-                (member "vector" (cdr (assoc :result-params processed-params))))
-            (let ((tmp-file (org-babel-temp-file "go-")))
-              (with-temp-file tmp-file (insert results))
-              (org-babel-import-elisp-from-file tmp-file))
-          (org-babel-read results t))
-        (org-babel-pick-name
-	 (cdr (assoc :colname-names params)) (cdr (assoc :colnames params)))
-	(org-babel-pick-name
-	 (cdr (assoc :rowname-names params)) (cdr (assoc :rownames params)))))
-     (org-babel-trim
-      (progn
-        (with-temp-file tmp-src-file (insert full-body))
-        (org-babel-eval
-         (format "%s run %s \"%s\" %s"
-                 org-babel-go-command
-                 (mapconcat 'identity (org-babel-go-as-list flags) " ")
-                 (org-babel-process-file-name tmp-src-file)
-                 (mapconcat #'(lambda (a)
-                                ;; If there's a chance that the symbol is a
-                                ;; ref, use that. Otherwise, just return the
-                                ;; string form of the value.
-                                (format "%S" (if (symbolp a)
-                                                 (let* ((ref (symbol-name a))
-                                                        (out (org-babel-read ref)))
-                                                   (if (equal out ref)
-                                                       (if (string-match "^\".*\"$" ref)
-                                                           (read ref)
-                                                         (org-babel-ref-resolve ref))
-                                                     out))
-                                               a)))
-                            (org-babel-go-as-list args) " "))
-         ""))))))
+    (with-temp-file tmp-src-file (insert full-body))
+    (if-let ((results
+	      (org-babel-eval
+	       (format "%s run %s \"%s\" %s"
+		       org-babel-go-command
+		       (mapconcat 'identity (org-babel-go-as-list flags) " ")
+		       (org-babel-process-file-name tmp-src-file)
+		       (mapconcat #'(lambda (a)
+				      ;; If there's a chance that the symbol is a
+				      ;; ref, use that. Otherwise, just return the
+				      ;; string form of the value.
+				      (format "%S" (if (symbolp a)
+						       (let* ((ref (symbol-name a))
+							      (out (org-babel-read ref)))
+							 (if (equal out ref)
+							     (if (string-match "^\".*\"$" ref)
+								 (read ref)
+							       (org-babel-ref-resolve ref))
+							   out))
+						     a)))
+				  (org-babel-go-as-list args) " ")) "")))
+	(org-babel-reassemble-table
+	 (if (or (member "table" (cdr (assoc :result-params processed-params)))
+		 (member "vector" (cdr (assoc :result-params processed-params))))
+	     (let ((tmp-file (org-babel-temp-file "go-")))
+	       (with-temp-file tmp-file (insert (org-babel-trim results)))
+	       (org-babel-import-elisp-from-file tmp-file))
+	   (org-babel-read (org-babel-trim results) t))
+	 (org-babel-pick-name
+	  (cdr (assoc :colname-names params)) (cdr (assoc :colnames params)))
+	 (org-babel-pick-name
+	  (cdr (assoc :rowname-names params)) (cdr (assoc :rownames params)))))))
 
 ;; This function should be used to assign any variables in params in
 ;; the context of the session environment.
