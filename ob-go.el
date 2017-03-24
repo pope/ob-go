@@ -81,32 +81,20 @@
 
 (defun org-babel-expand-body:go (body params &optional processed-params)
   "Expand BODY according to PARAMS, return the expanded body."
-  (let ((vars (org-babel-go-get-var params))
-        (main-p (not (string= (cdr (assoc :main params)) "no")))
-        (imports (or (cdr (assoc :imports params))
-                     (org-babel-read (org-entry-get nil "imports" t))))
-        (package (or (cdr (assoc :package params))
-                     (org-babel-read (org-entry-get nil "package" t)))))
-    (if (and main-p package)
-        (error ":package shall be used with :main no")
-      (mapconcat 'identity
-                 (list
-                  ;; package
-                  (org-babel-go-ensure-package body package)
-
-                  ;; imports
-                  (org-babel-go-insert-imports imports)
-
-                  ;; variables
-                  (mapconcat 'org-babel-go-var-to-go vars "\n")
-                  ;; body
-                  (if main-p
-                      (org-babel-go-ensure-main-wrap body)
-                    body))
-                 "\n"))))
+  (let* ((vars (org-babel-go-get-var params))
+         (main-p (not (string= (cdr (assoc :main params)) "no")))
+         (imports (or (cdr (assoc :imports params))
+                      (org-babel-read (org-entry-get nil "imports" t))))
+         (package (or (cdr (assoc :package params))
+                      (org-babel-read (org-entry-get nil "package" t))))
+         (body (if main-p (org-babel-go-ensure-main-wrap body) body))
+         )
+    (org-babel-go-custom-vars (org-babel-go-custom-imports (org-babel-go-ensure-package body package)
+                                                           imports)
+                              vars)))
 
 (defun org-babel-execute:go (body params)
-  "Execute a block of Template code with org-babel.  This function is
+  "Execute a block of Template code with org-babel. This function is
 called by `org-babel-execute-src-block'"
   (message "executing Go source code block")
   (let* ((tmp-src-file (org-babel-temp-file "go-src-" ".go"))
@@ -164,28 +152,58 @@ support for sessions"
       body
     (concat "func main() {\n" body "\n}\n")))
 
-(defun org-babel-go-ensure-package (body package)
+(defun org-babel-go-append-package (package)
   "Check to see if package is set. If not, add main."
-  (if package
-      (concat "package " package)
-    (if (string-match-p "^[ \t]*package" body)
-        ""
-      "package main")))
+  (concat "package " (if (and package (not (string-empty-p package))) package "main")))
+
+(defun org-babel-go-ensure-package (body package)
+  "Ensure package exists."
+  (if (org-babel-go-package-p body)
+      body
+    (concat (org-babel-go-append-package package) "\n" body)))
+
+(defun org-babel-go-package-p (body)
+  "Check to see whether package is set or not."
+  (string-match-p "^[ \t]*package " body))
+
+(defun org-babel-go-package-position (body)
+  (string-match "^[ \t]*package " body))
+
+(defun org-babel-go-custom-imports (body imports)
+  "Append custom import packages."
+  (let* ((start (string-match "\n"
+                              (substring body
+                                         (org-babel-go-package-position body)))))
+    (concat (substring body 0 start)
+            "\n"
+            (org-babel-go-insert-imports imports)
+            (substring body start))))
 
 (defun org-babel-go-insert-imports (imports)
-  (concat "import ("
-          "\n\t"
-          (mapconcat #'(lambda (pkg) (format "%S" pkg))
-                             (org-babel-go-as-list imports)
-                             "\t\n")
-          "\n)"
-          "\n"))
+  (let ((packages (org-babel-go-as-list imports)))
+    (if (= (length packages) 0)
+        ""
+      (concat "import ("
+              "\n\t"
+              (mapconcat #'(lambda (pkg) (format "%S" pkg))
+                         packages
+                         "\t\n")
+              "\n)"
+              "\n"))))
+
+(defun org-babel-go-custom-vars (body vars)
+  "Append custom variables at bottom."
+  (if (=  (length vars) 0)
+      body
+    (concat body "\n" (mapconcat 'org-babel-go-var-to-go vars "\n"))))
 
 (defun org-babel-go-get-var (params)
-  "org-babel-get-header was removed in newer versions of org (master branch)"
-  (if (fboundp 'org-babel-get-header)
-      (mapcar #'cdr (org-babel-get-header params :var))
-    (org-babel--get-vars params)))
+  "org-babel-get-header was removed in org version 8.3.3"
+  (let* ((fversion (org-version))
+         (version (string-to-int fversion)))
+    (if (< version 8.3)
+        (mapcar #'cdr (org-babel-get-header params :var))
+      (org-babel--get-vars params))))
 
 (defun org-babel-go-gofmt (body)
   "Run gofmt over the body. Why not?"
