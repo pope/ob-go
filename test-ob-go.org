@@ -3,6 +3,20 @@
   :PROPERTIES:
   :ID:       412a86b1-644a-45b8-9e6d-bdc2b42d7e20
   :END:
+
+#+BEGIN_SRC go 
+package main 
+
+import "fmt"
+
+func main() {
+    fmt.Println("hello, 世界!")
+}
+#+END_SRC
+
+#+RESULTS:
+: hello, 世界!
+
 #+source: simple
 #+BEGIN_SRC go :imports "fmt" :results silent
     fmt.Printf("42")

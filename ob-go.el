@@ -114,8 +114,6 @@ called by `org-babel-execute-src-block'"
          (flags (cdr (assoc :flags processed-params)))
          (args (cdr (assoc :args processed-params)))
          ;; expand the body with `org-babel-expand-body:go'
-         (full-body (org-babel-expand-body:go
-                     body params processed-params))
          (coding-system-for-read 'utf-8) ;; use utf-8 with subprocesses
          (coding-system-for-write 'utf-8))
     (with-temp-file tmp-src-file (insert full-body))
@@ -176,8 +174,8 @@ support for sessions"
   (concat "import ("
           "\n\t"
           (mapconcat #'(lambda (pkg) (format "%S" pkg))
-                             (org-babel-go-as-list imports)
-                             "\t\n")
+                     (org-babel-go-as-list imports)
+                     "\t\n")
           "\n)"
           "\n"))
 
