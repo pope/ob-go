@@ -59,6 +59,15 @@
 (ert-deftest ob-go/assert ()
   (should t))
 
+(ert-deftest ob-go/org-bable-go-package-p ()
+  (should (org-babel-go-package-p "package main"))
+  (should-not (org-babel-go-package-p "//package main"))
+
+  (should (org-babel-go-package-p "//package main\npackage main"))
+  ;; fix it
+  ;; (should-not (org-babel-go-package-p "Package main"))
+  (should-not (org-babel-go-package-p "packaged")))
+
 (ert-deftest ob-go/simple-program ()
   "Hello world program."
   (if (executable-find org-babel-go-command)
@@ -94,6 +103,13 @@
 		      (org-babel-next-src-block 5)
 		      (should (string-equal "golang" (org-babel-execute-src-block))))))
 
+(ert-deftest ob-go/string-variables ()
+  "Test the usage of string variables."
+  (if (executable-find org-babel-go-command)
+      (org-test-at-id "412a86b1-644a-45b8-9e6d-bdc2b42d7e20"
+		      (org-babel-next-src-block 6)
+		      (should (string-equal "hello,ob-go" (org-babel-execute-src-block))))))
+
 (ert-deftest ob-go/table ()
   "Test of a table output."
   (if (executable-find org-babel-go-command)
@@ -117,6 +133,15 @@
                       (should (= 3.141592653589793
                                  (org-babel-execute-src-block))))))
 
+(ert-deftest ob-go/imports ()
+  "Test the imports option"
+  (if (executable-find org-babel-go-command)
+      (org-test-at-id "e1aaec56-f3c6-4187-a003-5530b3ba956d"
+                      (org-babel-next-src-block 2)
+                      (should (= 3.141592653589793
+                                 (org-babel-execute-src-block))))))
+
+
 (ert-deftest ob-go/packages ()
   (if (executable-find org-babel-go-command)
       (org-test-at-id "c44f7afe-d356-4293-ba83-9ac71c7e6049"
@@ -130,7 +155,6 @@
                       (org-babel-next-src-block 1)
                       (should (string-equal "'h' and 'i'"
                                             (org-babel-execute-src-block))))))
-
 
 (defun ob-go-test-runall ()
   (progn

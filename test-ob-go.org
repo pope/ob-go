@@ -3,23 +3,9 @@
   :PROPERTIES:
   :ID:       412a86b1-644a-45b8-9e6d-bdc2b42d7e20
   :END:
-
-#+BEGIN_SRC go 
-package main 
-
-import "fmt"
-
-func main() {
-    fmt.Println("hello, 世界!")
-}
-#+END_SRC
-
-#+RESULTS:
-: hello, 世界!
-
 #+source: simple
 #+BEGIN_SRC go :imports "fmt" :results silent
-    fmt.Printf("42")
+    fmt.Printf("%d", 42)
 #+END_SRC
 
 #+source: integer-var
@@ -42,6 +28,17 @@ func main() {
 #+source: string-var
 #+BEGIN_SRC go :var q="golang" :imports "fmt" :results silent
     fmt.Print(q)
+#+END_SRC
+
+#+source: basic
+#+BEGIN_SRC go :results silent
+package main 
+
+import "fmt"
+
+func main() {
+    fmt.Println("hello,ob-go")
+}
 #+END_SRC
 
 * Array
@@ -77,6 +74,16 @@ fmt.Printf("%s\n", a[0] + a[1] + string(len(a)))
 fmt.Printf("%v", math.Pi)
 #+END_SRC
 
+#+source: imports2
+#+BEGIN_SRC go :imports "math" :results silent
+package main 
+
+import "fmt"
+
+func main() {
+    fmt.Printf("%v", math.Pi)
+}
+#+END_SRC
 * Package
   :PROPERTIES:
   :ID:       c44f7afe-d356-4293-ba83-9ac71c7e6049
