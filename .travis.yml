@@ -1,3 +1,5 @@
+language: generic
+
 env:
   matrix:
     - EMACS=emacs23
