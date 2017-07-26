@@ -200,7 +200,7 @@ support for sessions"
 (defun org-babel-go-get-var (params)
   "org-babel-get-header was removed in org version 8.3.3"
   (let* ((fversion (org-version))
-         (version (string-to-int fversion)))
+         (version (string-to-number fversion)))
     (if (< version 8.3)
         (mapcar #'cdr (org-babel-get-header params :var))
       (org-babel--get-vars params))))
