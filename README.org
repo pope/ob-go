@@ -13,7 +13,7 @@
   :   fmt.Println("Hello, 世界")
   : #+end_src
   :
-  : #+resutls:
+  : #+results:
   : : Hello, 世界
 
 * Language Specific Header Arguments
