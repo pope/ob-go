@@ -107,7 +107,9 @@ called by `org-babel-execute-src-block'"
          (coding-system-for-read 'utf-8) ;; use utf-8 with subprocesses
          (coding-system-for-write 'utf-8))
     (with-temp-file tmp-src-file (insert full-body))
-    (if-let ((results
+
+    (let
+	((results
 	      (org-babel-eval
 	       (format "%s run %s \"%s\" %s"
 		       org-babel-go-command
@@ -127,6 +129,7 @@ called by `org-babel-execute-src-block'"
 							   out))
 						     a)))
 				  (org-babel-go-as-list args) " ")) "")))
+      (if results
 	(org-babel-reassemble-table
 	 (if (or (member "table" (cdr (assoc :result-params processed-params)))
 		 (member "vector" (cdr (assoc :result-params processed-params))))
@@ -137,7 +140,8 @@ called by `org-babel-execute-src-block'"
 	 (org-babel-pick-name
 	  (cdr (assoc :colname-names params)) (cdr (assoc :colnames params)))
 	 (org-babel-pick-name
-	  (cdr (assoc :rowname-names params)) (cdr (assoc :rownames params)))))))
+	  (cdr (assoc :rowname-names params)) (cdr (assoc :rownames params))))
+	))))
 
 ;; This function should be used to assign any variables in params in
 ;; the context of the session environment.
