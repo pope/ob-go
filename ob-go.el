@@ -157,8 +157,9 @@ support for sessions"
     (concat "func main() {\n" body "\n}\n")))
 
 (defun org-babel-go-append-package (package)
-  "Check to see if package is set. If not, add main."
-  (concat "package " (if (and package (not (string-empty-p package))) package "main")))
+  "Check to see if package is set. If not, add main unless there is a 'discard value for the package key (allows to tangle many source blocks into one go project)."
+  (unless (eq package 'discard)
+    (concat "package " (if (and package (not (string-empty-p package))) package "main"))))
 
 (defun org-babel-go-ensure-package (body package)
   "Ensure package exists."
