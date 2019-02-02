@@ -32,9 +32,9 @@
                   function. To supply more, use a list.
   - =:package= :: Set the package of the file or disable automatic insertion
                   of the package declaration. Setting custom package name
-                  *requires :main no*. If not set, and code doesn't have a
+                  *requires :main no*. If not set, and code doesn't have an
                   explicit package, then =main= package is declared. To
-                  prevent adding the package declaration line use ='discard=
+                  prevent adding the package declaration line use '=discard=
                   value (useful when tangling multiple source blocks to
                   one file).
   - =:var= :: `ob-go' also supports Babel variables with some limitations. See
