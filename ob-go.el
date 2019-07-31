@@ -62,10 +62,7 @@
 ;;   package declaration.
 
 ;;; Code:
-(require 'org)
 (require 'ob)
-(require 'ob-eval)
-(require 'ob-ref)
 
 
 ;; optionally define a file extension for this language
