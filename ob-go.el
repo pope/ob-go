@@ -62,7 +62,7 @@
 ;;   package declaration.
 
 ;;; Code:
-(require 'ob)
+(require 'ob-tangle)
 
 
 ;; optionally define a file extension for this language
