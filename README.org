@@ -32,7 +32,7 @@
                   function. To supply more, use a list.
   - =:package= :: Set the package of the file. *Requires :main no*. If
                   not set, and code doesn't have a explicit package, then =main=
-                  package is declared.
+                  package is declared. Set to =nil= by using =:package 'discard=
   - =:var= :: `ob-go' also supports Babel variables with some limitations. See
               `ob-go' for more information about some of the limitations using
               =:var=.
